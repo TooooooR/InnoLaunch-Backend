@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from service.establishments.models import Establishment, Comment
+from establishments.models import Establishment, Comment
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -16,6 +16,3 @@ class EstablishmentSerializer(serializers.ModelSerializer):
         model = Establishment
         exclude = ('slug', 'id')
 
-
-class HomeSerializer(serializers.ModelSerializer):
-    recommendations = EstablishmentSerializer(many=True, read_only=True)

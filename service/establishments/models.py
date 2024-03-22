@@ -1,6 +1,6 @@
 from django.db import models
-from django.contrib.postgres.fields import RangeField
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.postgres.fields import IntegerRangeField
 
 
 class BaseModel(models.Model):
@@ -23,7 +23,7 @@ class Establishment(BaseModel):
     name = models.CharField(max_length=80)
     slug = models.SlugField(max_length=80)
     type = models.ForeignKey(Type, on_delete=models.CASCADE)
-    price_for_entrance = RangeField(models.IntegerField())
+    price_for_entrance = IntegerRangeField()
     capacity = models.IntegerField()
     services = models.ManyToManyField(Service, related_name='establishments')
     address = models.CharField(max_length=40)

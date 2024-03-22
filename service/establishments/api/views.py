@@ -18,7 +18,7 @@ class HomePageView(APIView):
             establishment = Establishment.objects.filter(recommended=True).order_by('rating')
         except Establishment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = HomeSerializer(establishment, context={'request': request})
+        serializer = EstablishmentSerializer(establishment, many=True, context={'request': request})
         return Response(serializer.data)
 
 
@@ -81,7 +81,7 @@ class CommentDetail(APIView):
         serializer = CommentSerializer(comment, context={'request': request})
         return Response(serializer.data)
 
-    def put(self, request, pk):
+    def put(self, request, slug, pk):
         """Update a comment"""
         comment = Comment.objects.get(pk=pk)
         serializer = CommentSerializer(comment, data=request.data, context={'request': request})
@@ -91,7 +91,7 @@ class CommentDetail(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk):
+    def delete(self, request, slug,  pk):
         """Delete a comment"""
         comment = Comment.objects.get(pk=pk)
         comment.delete()
