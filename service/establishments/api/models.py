@@ -24,8 +24,8 @@ class Photo(BaseModel):
 
 
 class Price(BaseModel):
-    amount = IntegerRangeField(validators=[MinValueValidator(0)])
-    payment_type = models.CharField(max_length=200)
+    amount = IntegerRangeField()
+    payment_type = models.CharField(max_length=50)
 
     def str(self):
         return f'{self.amount} - {self.payment_type}'

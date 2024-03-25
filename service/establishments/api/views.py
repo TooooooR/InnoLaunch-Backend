@@ -27,11 +27,11 @@ class EstablishmentsList(generics.ListAPIView):
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'type', 'address']
-    ordering_fields = ['comments__rating', 'price_for_entrance']
+    ordering_fields = ['comments__rating', 'price']
 
     def get_queryset(self):
         return Establishment.objects.all().only('name', 'rating', 'address',
-                                                'work_mobile_number', 'price_for_entrance')
+                                                'work_mobile_number', 'price')
 
 
 class EstablishmentDetail(APIView):
