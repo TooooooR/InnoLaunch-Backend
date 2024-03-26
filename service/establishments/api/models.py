@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.contrib.postgres.fields import IntegerRangeField
 
 
 class BaseModel(models.Model):
@@ -10,41 +9,43 @@ class BaseModel(models.Model):
         abstract = True
 
 
+class Establishment(BaseModel):
+    slug = models.SlugField(max_length=80)
+    name = models.CharField(max_length=80)
+    type = models.CharField(max_length=30)
+    short_description = models.TextField(max_length=1000)
+    address = models.OneToOneField('Address', on_delete=models.CASCADE)
+    capacity = models.IntegerField()
+    work_mobile_number = models.CharField(max_length=15)
+    recommended = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.name} - {self.work_mobile_number}"
+
+
 class Address(BaseModel):
     city = models.CharField(max_length=30)
     street = models.CharField(max_length=30)
     build_number = models.CharField(max_length=10)
 
-    def str(self):
+    def __str__(self):
         return f'{self.city}, {self.street}, {self.build_number}'
 
 
-class Photo(BaseModel):
-    image = models.ImageField()
+class PriceCategory(BaseModel):
+    price_range = models.CharField(max_length=30)
+    establishment = models.ManyToManyField(Establishment, related_name='price_category')
+
+    def __str__(self):
+        return f'{self.price_range} ({self.id})'
 
 
-class Price(BaseModel):
-    amount = IntegerRangeField()
-    payment_type = models.CharField(max_length=50)
+class EstablishmentImage(models.Model):
+    establishment = models.ForeignKey(Establishment, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='establishment_images')
 
-    def str(self):
-        return f'{self.amount} - {self.payment_type}'
-
-
-class Establishment(BaseModel):
-    slug = models.SlugField(max_length=80)
-    name = models.CharField(max_length=80)
-    type = models.CharField(max_length=30)
-    price = models.OneToOneField(Price, on_delete=models.CASCADE)
-    address = models.OneToOneField(Address, on_delete=models.CASCADE)
-    capacity = models.IntegerField()
-    work_mobile_number = models.CharField(max_length=15)
-    recommended = models.BooleanField(default=False)
-    photos = models.ForeignKey(Photo, on_delete=models.DO_NOTHING)
-    rating = models.FloatField()
-
-    def str(self):
-        return f"{self.name} - {self.work_mobile_number}"
+    def __str__(self):
+        return f"Image for {self.establishment.name}"
 
 
 class Amenity(BaseModel):
@@ -52,7 +53,7 @@ class Amenity(BaseModel):
     description = models.CharField(max_length=255)
     establishments = models.ManyToManyField(Establishment, related_name='amenities')
 
-    def str(self):
+    def __str__(self):
         return f'{self.name}'
 
 
@@ -60,7 +61,7 @@ class Service(BaseModel):
     name = models.CharField(max_length=100)
     establishments = models.ManyToManyField(Establishment, related_name='services', blank=True)
 
-    def str(self):
+    def __str__(self):
         return f'{self.name}'
 
 
@@ -70,11 +71,11 @@ class Comment(BaseModel):
     content = models.TextField(500)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
     establishment = models.ForeignKey(Establishment, on_delete=models.CASCADE, related_name='comments')
 
     class Meta:
         ordering = ('created_at',)
 
-    def str(self):
+    def __str__(self):
         return f"{self.author}({self.created_at})"

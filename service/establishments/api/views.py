@@ -6,32 +6,35 @@ from rest_framework import generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 
+from .filters import EstablishmentFilter
 from .serializers import *
 from .permissions import IsAdminOrReadOnly
 
 
-class HomePageView(APIView):
+class HomePageView(generics.ListAPIView):
     permission_classes = [IsAdminOrReadOnly]
+    serializer_class = EstablishmentSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'type', 'address__street']
+    ordering_fields = ['price_category__price_range', 'average_rating']
+    filterset_class = EstablishmentFilter
 
-    def get(self, request):
-        try:
-            establishment = Establishment.objects.filter(recommended=True).order_by('rating')
-        except Establishment.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = EstablishmentSerializer(establishment, many=True, context={'request': request})
-        return Response(serializer.data)
+    def get_queryset(self):
+        queryset = Establishment.objects.filter(recommended=True).only('name', 'address', 'work_mobile_number', )
+        return queryset.annotate(average_rating=Avg('comments__rating'))
 
 
 class EstablishmentsList(generics.ListAPIView):
     serializer_class = EstablishmentSerializer
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['name', 'type', 'address']
-    ordering_fields = ['comments__rating', 'price']
+    search_fields = ['name', 'type', 'address__street']
+    ordering_fields = ['price_category__price_range', 'average_rating']
+    filterset_class = EstablishmentFilter
 
     def get_queryset(self):
-        return Establishment.objects.all().only('name', 'rating', 'address',
-                                                'work_mobile_number', 'price')
+        queryset = Establishment.objects.all().only('name', 'address', 'work_mobile_number')
+        return queryset.annotate(average_rating=Avg('comments__rating'))
 
 
 class EstablishmentDetail(APIView):
@@ -39,7 +42,8 @@ class EstablishmentDetail(APIView):
 
     def get(self, request, slug):
         try:
-            establishment = Establishment.objects.get(slug=slug)
+            establishment = Establishment.objects.filter(slug=slug).annotate(
+                average_rating=Avg('comments__rating')).first()
         except Establishment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = EstablishmentSerializer(establishment, context={'request': request})
@@ -55,7 +59,7 @@ class CommentListCreate(generics.ListCreateAPIView):
         """Query set for retrieving all comments for specialty"""
         slug = self.kwargs.get('slug')
         try:
-            comments = Comment.objects.filter(establishment__slug=slug)
+            comments = Comment.objects.filter(establishment__slug=slug, is_active=True)
             return comments
         except Comment.DoesNotExist:
             raise NotFound("Comments for this establishment do not exist.")
@@ -91,7 +95,7 @@ class CommentDetail(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, slug,  pk):
+    def delete(self, request, slug, pk):
         """Delete a comment"""
         comment = Comment.objects.get(pk=pk)
         comment.delete()
