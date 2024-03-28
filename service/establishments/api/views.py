@@ -1,3 +1,5 @@
+from django.db.models import Avg, FloatField
+from django.db.models.functions import Round
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
@@ -13,19 +15,22 @@ from .permissions import IsAdminOrReadOnly
 
 class HomePageView(generics.ListAPIView):
     permission_classes = [IsAdminOrReadOnly]
-    serializer_class = EstablishmentSerializer
+    serializer_class = EstablishmentListSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'type', 'address__street']
     ordering_fields = ['price_category__price_range', 'average_rating']
     filterset_class = EstablishmentFilter
 
     def get_queryset(self):
-        queryset = Establishment.objects.filter(recommended=True).only('name', 'address', 'work_mobile_number', )
-        return queryset.annotate(average_rating=Avg('comments__rating'))
+        queryset = Establishment.objects.filter(recommended=True).only('name', 'address', 'work_mobile_number')
+        queryset = queryset.annotate(
+            average_rating=Round(Avg('comments__rating'), 1, output_field=FloatField())
+        )
+        return queryset
 
 
 class EstablishmentsList(generics.ListAPIView):
-    serializer_class = EstablishmentSerializer
+    serializer_class = EstablishmentListSerializer
     permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'type', 'address__street']
@@ -34,7 +39,7 @@ class EstablishmentsList(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = Establishment.objects.all().only('name', 'address', 'work_mobile_number')
-        return queryset.annotate(average_rating=Avg('comments__rating'))
+        return queryset.annotate(average_rating=Round(Avg('comments__rating'), 1, output_field=FloatField()))
 
 
 class EstablishmentDetail(APIView):
@@ -46,7 +51,7 @@ class EstablishmentDetail(APIView):
                 average_rating=Avg('comments__rating')).first()
         except Establishment.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = EstablishmentSerializer(establishment, context={'request': request})
+        serializer = EstablishmentDetailSerializer(establishment, context={'request': request})
         return Response(serializer.data)
 
 
@@ -75,7 +80,6 @@ class CommentListCreate(generics.ListCreateAPIView):
 
 class CommentDetail(APIView):
     """Endpoint to get specific detail about a comment"""
-
     def get(self, request, slug, pk):
         """Get specific comment"""
         try:

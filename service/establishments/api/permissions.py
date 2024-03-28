@@ -9,4 +9,3 @@ class IsAdminOrReadOnly(permissions.IsAdminUser):
         if request.method in permissions.SAFE_METHODS:
             return True
         return admin_permission
-
