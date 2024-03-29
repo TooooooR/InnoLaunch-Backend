@@ -10,5 +10,5 @@ class EstablishmentFilter(django_filters.FilterSet):
 
     class Meta:
         model = Establishment
-        fields = ['name', 'type', 'amenities', 'services', 'recommended',
+        fields = ['name', 'type', 'amenities', 'services', 'is_recommended',
                   'address__city', 'price_category']

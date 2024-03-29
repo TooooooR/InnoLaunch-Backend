@@ -47,7 +47,7 @@ class EstablishmentListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Establishment
-        fields = ('type', 'work_mobile_number', 'url', 'address', 'price_category', 'images')
+        fields = ('name', 'type', 'work_mobile_number', 'url', 'address', 'price_category', 'images', 'is_recommended')
 
     @staticmethod
     def get_total_comments_number(obj):

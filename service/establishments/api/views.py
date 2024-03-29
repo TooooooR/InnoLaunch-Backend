@@ -22,7 +22,7 @@ class HomePageView(generics.ListAPIView):
     filterset_class = EstablishmentFilter
 
     def get_queryset(self):
-        queryset = Establishment.objects.filter(recommended=True).only('name', 'address', 'work_mobile_number')
+        queryset = Establishment.objects.filter(is_recommended=True).only('name', 'address', 'work_mobile_number')
         queryset = queryset.annotate(
             average_rating=Round(Avg('comments__rating'), 1, output_field=FloatField())
         )

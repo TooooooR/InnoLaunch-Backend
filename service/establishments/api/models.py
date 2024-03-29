@@ -15,10 +15,10 @@ class Establishment(BaseModel):
     type = models.CharField(max_length=30)
     short_description = models.TextField(max_length=1000)
     address = models.OneToOneField('Address', on_delete=models.CASCADE)
-    price_category = models.ForeignKey('PriceCategory', on_delete=models.CASCADE, null=True, blank=True)
+    price_category = models.ForeignKey('PriceCategory', on_delete=models.CASCADE)
     capacity = models.IntegerField()
     work_mobile_number = models.CharField(max_length=15)
-    recommended = models.BooleanField(default=False)
+    is_recommended = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name} - {self.work_mobile_number}"
@@ -59,7 +59,7 @@ class Amenity(BaseModel):
 
 class Service(BaseModel):
     name = models.CharField(max_length=100)
-    establishments = models.ManyToManyField(Establishment, related_name='services', blank=True)
+    establishments = models.ManyToManyField(Establishment, related_name='services')
 
     def __str__(self):
         return f'{self.name}'
