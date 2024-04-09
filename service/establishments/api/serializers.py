@@ -36,7 +36,7 @@ class ServiceSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        exclude = ('id', 'establishment', 'is_active')
+        exclude = ('establishment', 'is_active')
 
 
 class EstablishmentListSerializer(serializers.ModelSerializer):
@@ -47,7 +47,8 @@ class EstablishmentListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Establishment
-        fields = ('name', 'type', 'work_mobile_number', 'url', 'address', 'price_category', 'images', 'is_recommended')
+        fields = ('name', 'type', 'work_mobile_number', 'url', 'address', 'price_category',
+                  'images', 'is_recommended',)
 
     @staticmethod
     def get_total_comments_number(obj):

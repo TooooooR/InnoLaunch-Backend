@@ -78,4 +78,4 @@ class Comment(BaseModel):
         ordering = ('created_at',)
 
     def __str__(self):
-        return f"{self.author}({self.created_at})"
+        return f"{self.author}({self.created_at}) - {self.id}"

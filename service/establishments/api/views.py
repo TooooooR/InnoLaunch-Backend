@@ -22,7 +22,9 @@ class HomePageView(generics.ListAPIView):
     filterset_class = EstablishmentFilter
 
     def get_queryset(self):
-        queryset = Establishment.objects.filter(is_recommended=True).only('name', 'address', 'work_mobile_number')
+        queryset = (Establishment.objects.filter(is_recommended=True).select_related('address').
+                    prefetch_related('price_category').
+                    only('name', 'address', 'work_mobile_number', 'type', 'is_recommended'))
         queryset = queryset.annotate(
             average_rating=Round(Avg('comments__rating'), 1, output_field=FloatField())
         )
@@ -38,7 +40,8 @@ class EstablishmentsList(generics.ListAPIView):
     filterset_class = EstablishmentFilter
 
     def get_queryset(self):
-        queryset = Establishment.objects.all().only('name', 'address', 'work_mobile_number')
+        queryset = (Establishment.objects.all().select_related('address').
+                    prefetch_related('price_category').only('name', 'address', 'work_mobile_number'))
         return queryset.annotate(average_rating=Round(Avg('comments__rating'), 1, output_field=FloatField()))
 
 
@@ -80,6 +83,7 @@ class CommentListCreate(generics.ListCreateAPIView):
 
 class CommentDetail(APIView):
     """Endpoint to get specific detail about a comment"""
+
     def get(self, request, slug, pk):
         """Get specific comment"""
         try:
