@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'cachalot',
 
@@ -144,10 +144,25 @@ CELERY_BROKEN_URL = 'redis://redis:6379/0'
 
 REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '50/day',
-        'user': '100/day'
+        'anon': '100/day',
+        'user': '500/day'
     },
     'DEFAULT_PAGINATION_CLASS': 'establishments.api.pagination.StandardResultsSetPagination',
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": 'redis://redis:6379/1',
+    }
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": False,
 }
 
 LOGGING = {
@@ -161,22 +176,4 @@ LOGGING = {
             'level': 'DEBUG'
         }
     }
-}
-
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": 'redis://redis:6379',
-        "OPTIONS": {
-            "db": "1",
-        }
-    }
-}
-
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
-    "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
-    "UPDATE_LAST_LOGIN": False,
 }
