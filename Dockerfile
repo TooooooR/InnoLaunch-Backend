@@ -5,6 +5,7 @@ ENV PYTHONUNBUFFERED=1
 COPY service /service
 COPY requirements.txt /temp/requirements.txt
 WORKDIR /service
+
 EXPOSE 8000
 
 RUN apk add postgresql-client build-base postgresql-dev

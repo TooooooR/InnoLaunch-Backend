@@ -24,7 +24,8 @@ class HomePageView(generics.ListAPIView):
     def get_queryset(self):
         queryset = (Establishment.objects.filter(is_recommended=True).select_related('address').
                     prefetch_related('price_category').
-                    only('name', 'address', 'work_mobile_number', 'type', 'is_recommended', 'slug', 'price_category', ''))
+                    only('name', 'address', 'work_mobile_number', 'type',
+                         'is_recommended', 'slug', 'price_category'))
         queryset = queryset.annotate(
             average_rating=Round(Avg('comments__rating'), 1, output_field=FloatField())
         )
