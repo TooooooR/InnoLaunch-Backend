@@ -1,0 +1,20 @@
+[
+    {
+        "model": "establishments.address",
+        "pk": 100,
+        "fields": {
+            "city": "New York",
+            "street": "Broadway",
+            "build_number": "100"
+        }
+    },
+    {
+        "model": "establishments.address",
+        "pk": 101,
+        "fields": {
+            "city": "Los Angeles",
+            "street": "Hollywood Blvd",
+            "build_number": "101"
+        }
+    }
+]

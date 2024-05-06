@@ -1,0 +1,32 @@
+[
+    {
+        "model": "establishments.establishment",
+        "pk": 20,
+        "fields": {
+            "slug": "establishment-1",
+            "name": "Establishment 1",
+            "type": "Type 1",
+            "short_description": "Short description for Establishment 1",
+            "address": 100,
+            "price_category": 20,
+            "capacity": 50,
+            "work_mobile_number": "1234567890",
+            "is_recommended": true
+        }
+    },
+    {
+        "model": "establishments.establishment",
+        "pk": 21,
+        "fields": {
+            "slug": "establishment-2",
+            "name": "Establishment 2",
+            "type": "Type 2",
+            "short_description": "Short description for Establishment 2",
+            "address": 101,
+            "price_category": 21,
+            "capacity": 100,
+            "work_mobile_number": "9876543210",
+            "is_recommended": false
+        }
+    }
+]

@@ -1,0 +1,16 @@
+[
+    {
+        "model": "establishments.pricecategory",
+        "pk": 20,
+        "fields": {
+            "price_range": "100 - 1000"
+        }
+    },
+    {
+        "model": "establishments.pricecategory",
+        "pk": 21,
+        "fields": {
+            "price_range": "1000 - 3000"
+        }
+    }
+]

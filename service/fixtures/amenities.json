@@ -1,0 +1,20 @@
+[
+    {
+        "model": "establishments.amenity",
+        "pk": 20,
+        "fields": {
+            "name": "Amenity 1",
+            "description": "Description for Amenity 1",
+            "establishments": [20, 21]
+        }
+    },
+    {
+        "model": "establishments.amenity",
+        "pk": 21,
+        "fields": {
+            "name": "Amenity 2",
+            "description": "Description for Amenity 2",
+            "establishments": [20]
+        }
+    }
+]

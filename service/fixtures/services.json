@@ -1,0 +1,18 @@
+[
+    {
+        "model": "establishments.service",
+        "pk": 20,
+        "fields": {
+            "name": "Service 1",
+            "establishments": [20, 21]
+        }
+    },
+    {
+        "model": "establishments.service",
+        "pk": 21,
+        "fields": {
+            "name": "Service 2",
+            "establishments": [20]
+        }
+    }
+]
