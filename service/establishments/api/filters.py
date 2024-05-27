@@ -5,7 +5,8 @@ from .models import Establishment
 class EstablishmentFilter(django_filters.FilterSet):
     amenities = django_filters.CharFilter(method='filter_amenities')
     services = django_filters.CharFilter(method='filter_services')
-    type = django_filters.CharFilter(lookup_expr='icontains')
+    type = django_filters.CharFilter(method='filter_type')
+    price_category = django_filters.CharFilter(method='filter_price_category')
 
     class Meta:
         model = Establishment
@@ -24,3 +25,11 @@ class EstablishmentFilter(django_filters.FilterSet):
         for amenity in services_list:
             queryset = queryset.filter(services__name__icontains=amenity)
         return queryset
+
+    def filter_type(self, queryset, name, value):
+        types_list = value.split(';')
+        return queryset.filter(type__in=types_list)
+
+    def filter_price_category(self, queryset, name, value):
+        price_category_list = value.split(';')
+        return queryset.filter(price_category__price_range__in=price_category_list)
