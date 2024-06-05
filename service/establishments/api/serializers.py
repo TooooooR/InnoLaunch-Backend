@@ -50,10 +50,6 @@ class EstablishmentListSerializer(serializers.ModelSerializer):
         fields = ('name', 'type', 'work_mobile_number', 'url', 'address', 'price_category',
                   'images', 'is_recommended',)
 
-    @staticmethod
-    def get_total_comments_number(obj):
-        return obj.comments.count()
-
 
 class EstablishmentDetailSerializer(serializers.ModelSerializer):
     average_rating = serializers.FloatField(read_only=True, )
