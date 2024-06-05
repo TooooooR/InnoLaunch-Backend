@@ -17,7 +17,7 @@ class Establishment(BaseModel):
     address = models.OneToOneField('Address', on_delete=models.CASCADE)
     price_category = models.ForeignKey('PriceCategory', on_delete=models.CASCADE)
     capacity = models.IntegerField()
-    work_mobile_number = models.CharField(max_length=15)
+    work_mobile_number = models.CharField(max_length=30)
     is_recommended = models.BooleanField(default=False)
 
     def __str__(self):
